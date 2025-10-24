@@ -6,17 +6,10 @@
   <title>Jump Scare</title>
   <style>
     html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;touch-action:manipulation;cursor:none}
-    video,img{width:100%;height:100%;object-fit:cover;background:#000}
-    /* Extra Small Phones (older/smaller iPhones, Android minis) */
-    @media (max-width:360px){ video,img{object-fit:contain;} }
-    /* Small Phones (most iPhones, Samsung, Xiaomi) */
-    @media (min-width:361px) and (max-width:480px){ video,img{object-fit:cover;} }
-    /* Large Phones and Phablets */
-    @media (min-width:481px) and (max-width:767px){ video,img{object-fit:cover;} }
-    /* Tablets (iPad Air, iPad, Galaxy Tab, Xiaomi Pad) */
-    @media (min-width:768px) and (max-width:1180px){ video,img{object-fit:cover;} }
-    /* Laptops and Desktops */
-    @media (min-width:1181px){ video,img{object-fit:cover;} }
+    body{display:flex;align-items:center;justify-content:center}
+    video,img{max-width:100vw;max-height:100vh;width:auto;height:auto;object-fit:cover;background:#000}
+    /* Phones & narrow portrait screens */
+    @media (max-width:767px){ video,img{object-fit:contain;} }
     #tap{position:fixed;inset:0;display:none;place-items:center;color:#fff;background:rgba(0,0,0,.6);font:600 18px/1.2 system-ui}
   </style>
 </head>
@@ -26,8 +19,10 @@
   <script>
     const v=document.getElementById('scare'), hint=document.getElementById('tap');
 
-    // Try to unmute after autoplay (may be blocked on some mobiles)
-    v.addEventListener('play',()=>{ setTimeout(()=>{ v.muted=false; if(v.muted) hint.style.display='grid'; },400); });
+    const updateHint=()=>{ hint.style.display=v.muted?'grid':'none'; };
+    if(v.readyState>=2){ updateHint(); } else { v.addEventListener('play',updateHint,{once:true}); }
+    v.addEventListener('volumechange',updateHint);
+    v.addEventListener('pause',()=>{ if(!v.ended) v.play().catch(()=>{}); });
 
     // First user interaction: unmute, ensure play, try fullscreen
     const go=async()=>{
