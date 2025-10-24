@@ -14,15 +14,17 @@
   </style>
 </head>
 <body>
-  <video id="scare" src="scare-vid.mp4" autoplay muted playsinline preload="auto"></video>
+  <video id="scare" src="scare-vid.mp4" autoplay muted playsinline preload="auto" loop></video>
   <div id="tap">Tap to unmute</div>
   <script>
     const v=document.getElementById('scare'), hint=document.getElementById('tap');
 
-    const updateHint=()=>{ hint.style.display=v.muted?'grid':'none'; };
+    const ensurePlay=()=>{ if(v.paused && !v.ended) v.play().catch(()=>{}); };
+    const updateHint=()=>{ hint.style.display=v.muted?'grid':'none'; ensurePlay(); };
     if(v.readyState>=2){ updateHint(); } else { v.addEventListener('play',updateHint,{once:true}); }
     v.addEventListener('volumechange',updateHint);
-    v.addEventListener('pause',()=>{ if(!v.ended) v.play().catch(()=>{}); });
+    ['pause','stalled','waiting','suspend'].forEach(evt=>v.addEventListener(evt,ensurePlay));
+    setInterval(()=>{ if(!document.hidden) ensurePlay(); },1000);
 
     // First user interaction: unmute, ensure play, try fullscreen
     const go=async()=>{
@@ -37,7 +39,7 @@
     window.addEventListener('click',go,{once:true});
 
     // If page regains focus, keep it scary
-    document.addEventListener('visibilitychange',()=>{ if(!document.hidden) v.play().catch(()=>{}); });
+    document.addEventListener('visibilitychange',()=>{ if(!document.hidden) ensurePlay(); });
   </script>
 </body>
 </html>
