@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jump Scare</title>
+  <style>
+    html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;}
+    video,img{width:100%;height:100%;object-fit:cover;}
+    audio{display:none;}
+
+    /* Extra Small Phones (older/smaller iPhones, Android minis) */
+    @media (max-width:360px){
+      video,img{object-fit:contain;}
+    }
+
+    /* Small Phones (most iPhones, Samsung, Xiaomi) */
+    @media (min-width:361px) and (max-width:480px){
+      video,img{object-fit:cover;}
+    }
+
+    /* Large Phones and Phablets */
+    @media (min-width:481px) and (max-width:767px){
+      video,img{object-fit:cover;}
+    }
+
+    /* Tablets (iPad Air, iPad, Galaxy Tab, Xiaomi Pad) */
+    @media (min-width:768px) and (max-width:1180px){
+      video,img{object-fit:cover;}
+    }
+
+    /* Laptops and Desktops */
+    @media (min-width:1181px){
+      video,img{object-fit:cover;}
+    }
+  </style>
+</head>
+<body>
+  <video id="scare" src="https://cdn.pixabay.com/video/2021/09/14/88965-599715015_large.mp4" autoplay muted playsinline></video>
+  <audio id="sound" src="https://www.soundjay.com/human/scream-02.mp3" autoplay></audio>
+  <script>
+    const v=document.getElementById('scare');
+    const a=document.getElementById('sound');
+    v.onplay=()=>{a.play();setTimeout(()=>{v.muted=false;},500);}
+  </script>
+</body>
+</html>
